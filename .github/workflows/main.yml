@@ -34,11 +34,11 @@ jobs:
       - name: Run tests
         run: flutter test
 
-      - name: Build AAB
-        run: flutter build appbundle --release
-
       - name: Build APK
         run: flutter build apk --release
+
+      - name: Build AAB
+        run: flutter build appbundle --release
 
       - name: Create release
         run: gh release create v${{ github.run_number }} --title "v${{ github.run_number }}" --notes "Automated release"
