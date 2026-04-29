@@ -3,7 +3,7 @@ name: App Flutter
 on:
   push:
     branches:
-      - master
+      - main
 
 permissions:
   contents: write
