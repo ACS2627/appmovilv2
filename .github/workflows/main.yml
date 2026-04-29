@@ -8,9 +8,6 @@ on:
 permissions:
   contents: write
 
-env:
-  GH_TOKEN: ${{ github.token }}
-
 jobs:
   flutter:
     runs-on: ubuntu-latest
@@ -43,12 +40,17 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
-      #  release dinámico (IMPORTANTE)
       - name: Create release
         run: gh release create v${{ github.run_number }} --title "v${{ github.run_number }}" --notes "Automated release"
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Upload APK
         run: gh release upload v${{ github.run_number }} build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Upload AAB
         run: gh release upload v${{ github.run_number }} build/app/outputs/bundle/release/app-release.aab
+        env:
+          GH_TOKEN: ${{ github.token }}
