@@ -4,33 +4,53 @@ on:
   push:
     branches:
       - master
-env:
-  GH_TOKEN: ${{ github.token }} # token de GitHub para tener permisos para crear la Action
+
+permissions:
+  contents: write
+
 jobs:
   flutter:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clonado
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: Configurar Java
-        uses: actions/setup-java@v4.7.1
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Instalar flutter
+
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           flutter-version: 3.41.0
-      - name: Dependencias del proyecto
+
+      - name: Install dependencies
         run: flutter pub get
-      - name: Ejecutar tests
+
+      - name: Run tests
         run: flutter test
-      - name: Construir APK y AAB
+
+      - name: Build APK
         run: flutter build apk --release
-      - run: flutter build appbundle --release
-      - name: Crear release
-        run: gh release create "v1.0.0"
-      - name: Subir archivos a release
-        run: gh release upload "v1.0.0" build/app/outputs/flutter-apk/app-release.apk build/app/outputs/bundle/release/app-release.aab
+
+      - name: Build AAB
+        run: flutter build appbundle --release
+
+      - name: Create release
+        run: gh release create v1.0.0 --title "v1.0.0" --notes "Automated release"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Upload APK
+        run: gh release upload v1.0.0 build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Upload AAB
+        run: gh release upload v1.0.0 build/app/outputs/bundle/release/app-release.aab
+        env:
+          GH_TOKEN: ${{ github.token }}
